@@ -7,34 +7,35 @@ using UnityEngine.UI;
 
 public class DisableAllButtons : MonoBehaviour
 {
-    public GameObject[] objs;
-    [SerializeField] private float[] timeStops;
-    [SerializeField] private float stopTime;
     
-    void Start()
-    {
-           objs = GameObject.FindGameObjectsWithTag("Selectable");
-           Invoke("DeactivateAllButtons", timeStops[0]);
-           Invoke("ActivateAllButtons", timeStops[1]);
-    }
+    // void Start()
+    // {
+        
+    //     objs = GameObject.FindGameObjectsWithTag("Selectable");
+    //     DeactivateAllButtons();
+    //     foreach (float stopTime in timeStops){
+    //         Invoke("ActivateAllButtons", timeStops[0]);
+    //         Invoke("DeactivateAllButtons", timeStops[1]);
+    //     }
+    // }
 
-    public void DeactivateAllButtons()
-	{
-        foreach (GameObject selectable in objs){
-            Button button;
-	        button = selectable.GetComponentInChildren<Button>();
-	        button.interactable = false;
-        }
-    }
+    // public void DeactivateAllButtons()
+	// {
+    //     foreach (GameObject selectable in objs){
+    //         Button button;
+	//         button = selectable.GetComponentInChildren<Button>();
+	//         button.interactable = false;
+    //     }
+    // }
 
-    public void ActivateAllButtons()
-	{
-        foreach (GameObject selectable in objs){
-            Button button;
-	        button = selectable.GetComponentInChildren<Button>();
-	        button.interactable = true;
-        }
-    }
+    // public void ActivateAllButtons()
+	// {
+    //     foreach (GameObject selectable in objs){
+    //         Button button;
+	//         button = selectable.GetComponentInChildren<Button>();
+	//         button.interactable = true;
+    //     }
+    // }
 
 
 }
