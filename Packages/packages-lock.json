@@ -1,5 +1,33 @@
 {
   "dependencies": {
+    "com.htc.upm.wave.essence": {
+      "version": "https://github.com/ViveSoftware/VIVE-Wave.git?path=com.htc.upm.wave.essence",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.htc.upm.wave.xrsdk": "5.4.0-r.8",
+        "com.htc.upm.wave.native": "5.4.0-r.8"
+      },
+      "hash": "9c043820327fe72609b8714cec3fbe1bf569cbb3"
+    },
+    "com.htc.upm.wave.native": {
+      "version": "https://github.com/ViveSoftware/VIVE-Wave.git?path=com.htc.upm.wave.native",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.htc.upm.wave.xrsdk": "5.4.0-r.8"
+      },
+      "hash": "9c043820327fe72609b8714cec3fbe1bf569cbb3"
+    },
+    "com.htc.upm.wave.xrsdk": {
+      "version": "https://github.com/ViveSoftware/VIVE-Wave.git?path=com.htc.upm.wave.xrsdk",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.xr.management": "3.2.4"
+      },
+      "hash": "9c043820327fe72609b8714cec3fbe1bf569cbb3"
+    },
     "com.unity.burst": {
       "version": "1.8.7",
       "depth": 1,

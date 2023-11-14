@@ -1,26 +1,26 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Linq;
+using System.IO;
+using System;
 
 public class AnswerController : MonoBehaviour
 {
-    public List<Button> buttons = new List<Button>{};
-    private int answer;
-    public List<int> correctAnswerList = new List<int>{};
-    private int correctAnswer;
-    List<int> answers = new List<int>{};
-    public int finalAnswer;
-    private float testStartTime;
-    private float sentencePairStartTime;
-    private float timeToAnswer;
 
+    string filename="";
+    public List<Button> buttons = new List<Button>{};
+    private int currentAnswer;
+    List<int> answers = new List<int>{};
+    List<double> degreeOffsetList = new List<double>{};
+    List<float> timeToAnswerList = new List<float>{};
+    [SerializeField] List<int> correctAnswers = new List<int>{};
+    private float timeToAnswer;
+    System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
     public GameObject[] objs;
+    public GameObject starter;
     [SerializeField] private float[] timeStops;
     [SerializeField] private float stopTime;
+    private int answerCounter = 0;
     
 
     private void Awake()
@@ -28,26 +28,22 @@ public class AnswerController : MonoBehaviour
             AddListeners();
         }
 
-
     void Start()
     {
+        filename = Application.dataPath + "/test.csv";
         objs = GameObject.FindGameObjectsWithTag("Selectable");
         DeactivateAllButtons();
-        testStartTime = Time.time;
-        //add 0 to the answers list as a default to check if there is no answer
-        answers.Add(0); 
-        BeginTest(); 
-		
+        AddStartListener();
+        
     }
 
     void BeginTest(){
+        Destroy(starter);
         int i = 0;
 
-        //Must be even i value or will throw error
         foreach (float stopTime in timeStops){
             if (i%2==0){
                 Invoke("ActivateAllButtons", timeStops[i]);
-                sentencePairStartTime = Time.time;
                 i++;
             }
             else{
@@ -59,41 +55,45 @@ public class AnswerController : MonoBehaviour
     }
 
     void GiveFinalAnswer(){
-        finalAnswer = answers.Last();
-        int i = 0;
-
-        if (finalAnswer == 0){
+        answers.Add(currentAnswer);
+        int correctAnswer = correctAnswers[answerCounter];
+        if (currentAnswer == 0){
             Debug.Log ("No Answer Recorded");
-            Debug.Log ("Time to answer is null");
-            i++;
+            degreeOffsetList.Add(0);
+            timeToAnswerList.Add(0);
         }
         else{
-            Debug.Log ("Final Answer: " + finalAnswer);
-            Debug.Log("Time to answer: " + timeToAnswer);
-            int correctAnswer = correctAnswerList[i];
-            // int difference = (Mathf.Abs(finalAnswer - correctAnswer));
-            // int degreeOffSet = difference * 22.5;
-            // Debug.Log("Summary: ");
-            i++;
+            double difference = Mathf.Abs(currentAnswer - correctAnswers[answerCounter]);
+            double degreeOffSet = difference * 22.5;
+            timeToAnswer /= 1000;
+
+            Debug.Log ("Final Answer: " + currentAnswer);
+            Debug.Log ("Correct Answer: " + correctAnswers[answerCounter]);
+            Debug.Log("Time to answer: " + timeToAnswer + " seconds");
+            Debug.Log("Degree difference: " + degreeOffSet);
+
+            degreeOffsetList.Add(degreeOffSet);
+            timeToAnswerList.Add(timeToAnswer);
+
         }
+
+        //Puts the current test to a .csv document
+        if(answers.Count == 5){
+            WriteCSV();
+        }
+        answerCounter++;
 	}
-
-    private void ListenerHandler(Button btn, int index)
-        {
-            btn.onClick.AddListener(() => { AddAnswer(index); });
-        }
  
-        private void AddAnswer(int index)
+        private void AnswerListener(int index)
         {
-            Debug.Log($"index = {index}");
-            answer = index + 1;
-            answers.Add(answer);
-            timeToAnswer = Time.time - testStartTime;
-            finalAnswer = answers.Last();
-
+            currentAnswer = index + 1;
+            timeToAnswer = stopwatch.ElapsedMilliseconds;
         }
+
     public void DeactivateAllButtons()
 	{
+        stopwatch.Reset();
+
         foreach (GameObject selectable in objs){
             Button button;
 	        button = selectable.GetComponentInChildren<Button>();
@@ -102,6 +102,9 @@ public class AnswerController : MonoBehaviour
     }
     public void ActivateAllButtons()
 	{
+        stopwatch.Start();
+        currentAnswer = 0;
+
         foreach (GameObject selectable in objs){
             Button button;
 	        button = selectable.GetComponentInChildren<Button>();
@@ -111,13 +114,39 @@ public class AnswerController : MonoBehaviour
 
     void AddListeners()
     {
-                    int i = 0;
-            foreach (Button btn in buttons)
-            {
-                ListenerHandler(btn, i);
- 
-                i++;
-            }
+        int i = 0;
+        foreach (Button btn in buttons)
+        {
+            ListenerHandler(btn, i);
+
+            i++;
+        }
+    }
+
+    private void ListenerHandler(Button btn, int index)
+        {
+            btn.onClick.AddListener(() => { AnswerListener(index); });
+        }
+
+    void WriteCSV()
+    {
+        TextWriter tw = new StreamWriter(filename, false);
+        tw.WriteLine("Sentence Pair, Correct Answer, Given Answer, Time to Answer, Degree Offset");
+        tw.Close();
+
+        tw = new StreamWriter(filename, true);
+        int row = 0;
+        foreach (int answer in answers){
+            tw.WriteLine((row+1) + "," + correctAnswers[row] + "," + answers[row] + "," + timeToAnswerList[row] + "," + degreeOffsetList[row]);
+            row++;
+        }
+        tw.Close();
+    }
+    private void AddStartListener()
+    {
+        starter = GameObject.FindGameObjectWithTag("Start");
+        Button btn = starter.GetComponentInChildren<Button>();
+        btn.onClick.AddListener(BeginTest);
     }
 
 }
