@@ -30,11 +30,21 @@ public class AnswerController : MonoBehaviour
 
     void Start()
     {
-        filename = Application.dataPath + "/test.csv";
+        CreateFile();
         objs = GameObject.FindGameObjectsWithTag("Selectable");
         DeactivateAllButtons();
         AddStartListener();
         
+    }
+
+    private void CreateFile()
+    {
+        int i = 1;
+        filename = Application.dataPath + "/" + i + "test.csv";
+        while (File.Exists(filename)){
+            filename = Application.dataPath + "/" + i + "test.csv";
+            i++;
+        }
     }
 
     void BeginTest(){
@@ -58,7 +68,6 @@ public class AnswerController : MonoBehaviour
         answers.Add(currentAnswer);
         int correctAnswer = correctAnswers[answerCounter];
         if (currentAnswer == 0){
-            Debug.Log ("No Answer Recorded");
             degreeOffsetList.Add(0);
             timeToAnswerList.Add(0);
         }
@@ -67,19 +76,15 @@ public class AnswerController : MonoBehaviour
             double degreeOffSet = difference * 22.5;
             timeToAnswer /= 1000;
 
-            Debug.Log ("Final Answer: " + currentAnswer);
-            Debug.Log ("Correct Answer: " + correctAnswers[answerCounter]);
-            Debug.Log("Time to answer: " + timeToAnswer + " seconds");
-            Debug.Log("Degree difference: " + degreeOffSet);
-
             degreeOffsetList.Add(degreeOffSet);
             timeToAnswerList.Add(timeToAnswer);
 
         }
 
-        //Puts the current test to a .csv document
-        if(answers.Count == 5){
+        //Change this to when test is stopped
+        if(answers.Count == 11){
             WriteCSV();
+            Debug.Log("Test created");
         }
         answerCounter++;
 	}
@@ -137,7 +142,13 @@ public class AnswerController : MonoBehaviour
         tw = new StreamWriter(filename, true);
         int row = 0;
         foreach (int answer in answers){
+            
+            if((row%5 == 0) & (row != 0)){
+                tw.WriteLine("Passage Break");
+            }
+            
             tw.WriteLine((row+1) + "," + correctAnswers[row] + "," + answers[row] + "," + timeToAnswerList[row] + "," + degreeOffsetList[row]);
+
             row++;
         }
         tw.Close();
