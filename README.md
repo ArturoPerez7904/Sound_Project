@@ -21,4 +21,11 @@ Test Setup Steps
   9. Click the test you want to load
   10. Leave the headset within the room, if you remove it you will lose orientation setup
 
+Test File
+  1. Connect to pc and select File Transfer
+  2. Android
+  3. data
+  4. com.unity.vrtemplate
+  5. files
+
 
