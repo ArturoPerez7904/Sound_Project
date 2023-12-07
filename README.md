@@ -11,7 +11,7 @@ Game Download Steps: https://www.vive.com/us/support/focus3/category_howto/insta
 
 Test Setup Steps
   1. Turn it on while seated in the room
-  2. Connect atleast 1 controller, right or left
+  2. Connect right controller, right or left
   3. Hit ok on all options but ensure
   4. The headset is in seated/standing mode
   5. Forward is as aligned at the center speaker as possible
