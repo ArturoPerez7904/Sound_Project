@@ -8,6 +8,8 @@ TagManager:
   - Selectable
   - Start
   - Test Selector
+  - Server
+  - Client
   layers:
   - Default
   - TransparentFX
